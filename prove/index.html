@@ -1,11 +1,57 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PersonaVerify</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-950 text-white min-h-screen p-6"><div class="max-w-2xl mx-auto">
-<h1 class="text-2xl font-bold mb-6">🎭 PersonaVerify</h1>
-<div class="bg-gray-900 rounded-xl p-6 border border-gray-800 space-y-3">
-<h2 class="text-violet-400 font-semibold">Verify Account Link</h2>
-<input placeholder="Account A URL (e.g. GitHub)" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 outline-none">
-<input placeholder="Account B URL (e.g. Twitter)" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 outline-none">
-<input placeholder="Hint (optional)" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 outline-none">
-<button class="w-full bg-violet-600 hover:bg-violet-700 rounded-lg py-3 font-bold">🔗 Verify Link</button>
-</div>
-</div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PersonaVerify</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0a0a14] text-white min-h-screen">
+  <nav class="border-b border-violet-900/30 px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2"><span class="text-2xl">🎭</span><h1 class="text-xl font-bold">PersonaVerify</h1></div>
+    <span class="text-xs text-violet-400">Zero-Knowledge Identity Linking</span>
+  </nav>
+  <main class="max-w-4xl mx-auto p-6 space-y-6">
+    <!-- Input -->
+    <section class="bg-violet-950/20 rounded-2xl p-6 border border-violet-900/30">
+      <h2 class="text-violet-300 font-semibold mb-4">Verify Account Link</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-3">
+        <div class="space-y-2">
+          <label class="text-xs text-violet-400 uppercase">Account A</label>
+          <input placeholder="https://github.com/username" class="w-full bg-black/30 border border-violet-900/30 rounded-xl px-4 py-3 placeholder-gray-600 outline-none">
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs text-violet-400 uppercase">Account B</label>
+          <input placeholder="https://twitter.com/username" class="w-full bg-black/30 border border-violet-900/30 rounded-xl px-4 py-3 placeholder-gray-600 outline-none">
+        </div>
+      </div>
+      <input placeholder="Hint (optional)" class="w-full bg-black/30 border border-violet-900/30 rounded-xl px-4 py-3 mb-3 placeholder-gray-600 outline-none">
+      <button class="w-full bg-violet-600 hover:bg-violet-500 rounded-xl py-3 font-bold transition">🔗 Analyze & Verify</button>
+    </section>
+
+    <!-- Result - Side by side -->
+    <section class="bg-violet-950/20 rounded-2xl p-6 border border-green-900/50">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold">Verification Result</h3>
+        <span class="px-3 py-1 bg-green-900/50 text-green-400 text-xs rounded-full font-bold">✓ SAME PERSON</span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-black/30 rounded-xl p-4 border border-gray-800">
+          <p class="text-xs text-gray-500 mb-2">ACCOUNT A</p>
+          <p class="text-sm font-mono text-violet-300">github.com/vbuterin</p>
+          <p class="text-xs text-gray-600 mt-1">Ethereum repos, Solidity, research</p>
+        </div>
+        <div class="bg-black/30 rounded-xl p-4 border border-gray-800">
+          <p class="text-xs text-gray-500 mb-2">ACCOUNT B</p>
+          <p class="text-sm font-mono text-violet-300">twitter.com/VitalikButerin</p>
+          <p class="text-xs text-gray-600 mt-1">Ethereum commentary, crypto topics</p>
+        </div>
+      </div>
+      <div class="bg-black/30 rounded-xl p-4">
+        <p class="text-xs text-gray-500 mb-1">SIGNALS DETECTED</p>
+        <p class="text-sm text-gray-300">Cross-references between accounts, matching technical depth, same niche focus, consistent posting patterns on Ethereum-related topics</p>
+      </div>
+      <div class="mt-3 text-center"><span class="text-green-400 font-bold">Confidence: HIGH</span></div>
+    </section>
+  </main>
+</body>
+</html>
