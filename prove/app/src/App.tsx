@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Toaster, toast } from 'sonner'
-
-const CONTRACT = '0x985A164A4AA18cd5AdC1cCd9e0CFfa31625dE21f'
+import { read, write, CONTRACT } from './genlayer'
 
 type Confidence = 'high' | 'medium' | 'low'
 
@@ -181,33 +180,73 @@ function Dial({ result, analyzing }: { result: Verdict | null; analyzing: boolea
   )
 }
 
+function mapProof(p: any): Verdict {
+  const same = Boolean(p?.same_person)
+  let match = 0
+  const c = p?.confidence
+  if (typeof c === 'number') {
+    match = Math.round(c <= 1 ? c * 100 : c)
+  } else if (typeof c === 'string') {
+    const lc = c.toLowerCase()
+    const m = lc.match(/\d+(\.\d+)?/)
+    if (m) match = Math.round(Number(m[0]) <= 1 ? Number(m[0]) * 100 : Number(m[0]))
+    else match = lc.includes('high') ? 88 : lc.includes('med') ? 68 : 45
+  }
+  match = Math.max(0, Math.min(100, match))
+  const confidence: Confidence = match > 80 ? 'high' : match > 60 ? 'medium' : 'low'
+  let signals: string[] = []
+  if (Array.isArray(p?.signals)) signals = p.signals.map((s: any) => String(s))
+  else if (typeof p?.signals === 'string')
+    signals = p.signals
+      .split(/\n|;|·|\|/)
+      .map((s: string) => s.trim())
+      .filter(Boolean)
+  return { same_person: same, confidence, match, signals }
+}
+
 function App() {
   const [a, setA] = useState<Account>({ handle: '', bio: '' })
   const [b, setB] = useState<Account>({ handle: '', bio: '' })
+  const [hint, setHint] = useState('')
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<Verdict | null>(null)
+  const [total, setTotal] = useState(0)
 
-  function analyze() {
+  // Load proof count from the contract on mount
+  useEffect(() => {
+    read('stats')
+      .then((s: any) => setTotal(Number(s?.total_proofs ?? 0)))
+      .catch(() => {})
+  }, [])
+
+  async function analyze() {
     if (!a.handle.trim() || !b.handle.trim()) {
       toast.error('Both account profiles are required.')
       return
     }
     setAnalyzing(true)
     setResult(null)
-    toast('🪞 Extracting writing styles from both accounts…')
-    setTimeout(() => {
-      const match = Math.floor(40 + Math.random() * 60)
-      const confidence: Confidence = match > 80 ? 'high' : match > 60 ? 'medium' : 'low'
-      const same = match > 62
-      const signals = [...SIGNAL_POOL].sort(() => Math.random() - 0.5).slice(0, 4)
-      setResult({ same_person: same, confidence, match, signals })
-      setAnalyzing(false)
+    const tId = toast.loading('🪞 Linking accounts on-chain — extracting writing styles… (30–60s)')
+    try {
+      const fullHint = [hint.trim(), a.bio.trim(), b.bio.trim()].filter(Boolean).join(' || ')
+      await write('verify_link', [a.handle.trim(), b.handle.trim(), fullHint])
+      const s: any = await read('stats')
+      const t = Number(s?.total_proofs ?? 0)
+      setTotal(t)
+      const proof: any = await read('get_proof', [String(Math.max(0, t - 1))])
+      const v = mapProof(proof)
+      setResult(v)
       toast.success(
-        same
-          ? `Likely same person — ${confidence} confidence (${match}%)`
-          : `Likely different people — ${confidence} confidence (${match}%)`,
+        v.same_person
+          ? `Likely same person — ${v.confidence} confidence (${v.match}%)`
+          : `Likely different people — ${v.confidence} confidence (${v.match}%)`,
+        { id: tId },
       )
-    }, 2600)
+    } catch (e: any) {
+      toast.error('Verification failed', { id: tId, description: String(e?.message ?? e) })
+    } finally {
+      setAnalyzing(false)
+    }
   }
 
   return (
@@ -232,6 +271,12 @@ function App() {
           <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-white/15 to-transparent lg:block" />
           <div className="flex flex-col items-center gap-6 px-6">
             <Dial result={result} analyzing={analyzing} />
+            <input
+              value={hint}
+              onChange={(e) => setHint(e.target.value)}
+              placeholder="optional hint for the judge…"
+              className="w-52 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-center text-xs text-white placeholder-white/25 outline-none transition focus:border-white/40"
+            />
             <button
               onClick={analyze}
               disabled={analyzing}
@@ -284,7 +329,7 @@ function App() {
             </AnimatePresence>
           </div>
           <span className="hidden shrink-0 font-mono text-[10px] text-white/25 lg:inline">
-            {CONTRACT.slice(0, 10)}…{CONTRACT.slice(-6)}
+            {total} proofs · {CONTRACT.slice(0, 10)}…{CONTRACT.slice(-6)}
           </span>
         </div>
       </div>
