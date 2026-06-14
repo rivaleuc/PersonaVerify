@@ -10,10 +10,6 @@ Determining if two accounts are the same person requires analyzing behavioral pa
 
 **GenLayer (Bradbury):** `0x985A164A4AA18cd5AdC1cCd9e0CFfa31625dE21f`
 
-## Test
-
-Linked: github.com/vbuterin ↔ twitter.com/VitalikButerin → **same_person: true, confidence: high** 🔥
-
 ## Structure
 
 ```
