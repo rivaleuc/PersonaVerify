@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Toaster, toast } from 'sonner'
-import { read, write, CONTRACT } from './genlayer'
+import { read, write, CONTRACT, connectWallet, isWalletConnected } from './genlayer'
 
 type Confidence = 'high' | 'medium' | 'low'
 
@@ -211,6 +211,19 @@ function App() {
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<Verdict | null>(null)
   const [total, setTotal] = useState(0)
+  const [wallet, setWallet] = useState<string | null>(null)
+
+  const shortAddr = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`
+
+  async function handleConnect() {
+    try {
+      const addr = await connectWallet()
+      setWallet(addr)
+      toast.success(`Wallet ${isWalletConnected() ? 'connected' : 'linked'} · ${shortAddr(addr)}`)
+    } catch (e: any) {
+      toast.error('Wallet connection failed', { description: String(e?.message ?? e) })
+    }
+  }
 
   // Load proof count from the contract on mount
   useEffect(() => {
@@ -259,6 +272,13 @@ function App() {
           <span className="h-2 w-2 rounded-full bg-gradient-to-r from-pink-500 to-blue-500" />
           <span className="font-semibold tracking-tight">PersonaVerify</span>
           <span className="hidden text-white/30 sm:inline">— prove it without doxxing</span>
+          <span className="mx-1 h-3 w-px bg-white/15" />
+          <button
+            onClick={handleConnect}
+            className="rounded-full bg-gradient-to-r from-pink-500 to-blue-500 px-3 py-1 text-[11px] font-bold text-white transition hover:scale-[1.05]"
+          >
+            {wallet ? `◉ ${shortAddr(wallet)}` : 'Connect Wallet'}
+          </button>
         </div>
       </div>
 
