@@ -4,8 +4,8 @@
 
 PersonaVerify links two public profiles by analysing writing style, recurring topics, and cross-references, then issues a signed on-chain verdict of "same person" or not. The judgment is produced by GenLayer validators that crawl both pages and reason about them, and crucially it never outputs an identity — only a confidence-rated link. The result is reached by consensus, so no single node decides whether the link is real.
 
-- **Contract (Bradbury, chain 4221):** `0x985A164A4AA18cd5AdC1cCd9e0CFfa31625dE21f`
-- **Explorer:** https://explorer-bradbury.genlayer.com/contract/0x985A164A4AA18cd5AdC1cCd9e0CFfa31625dE21f
+- **Contract (Bradbury, chain 4221):** `0xCec693ba5B4525dAefC8bE61DaB3D4A7265175D7`
+- **Explorer:** https://explorer-bradbury.genlayer.com/contract/0xCec693ba5B4525dAefC8bE61DaB3D4A7265175D7
 - **Live app:** https://personaverify.pages.dev
 
 ## What it does

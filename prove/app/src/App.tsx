@@ -12,17 +12,6 @@ type Verdict = {
   signals: string[]
 }
 
-const SIGNAL_POOL = [
-  'Em-dash cadence and parenthetical asides match closely',
-  'Shared idiosyncratic spelling ("colour", "tho")',
-  'Identical emoji clustering at sentence ends',
-  'Topic overlap: rollups, MEV, validator economics',
-  'Sentence-length distribution is near-identical',
-  'Both reuse the phrase "to be fair" as a hedge',
-  'Comma-splice frequency aligns within 4%',
-  'Cross-references the same niche sources',
-]
-
 type Account = { handle: string; bio: string }
 
 function fingerprint(seed: string): number[] {
